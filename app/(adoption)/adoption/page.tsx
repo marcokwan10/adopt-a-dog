@@ -6,7 +6,6 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import Dogs from "@/app/components/dogs";
 import SelectedDogs from "@/app/components/selectedDogs";
 import Match from "@/app/components/match";
@@ -53,34 +52,32 @@ function Adoption() {
 						} = {};
 						return (
 							<Step key={label} {...stepProps}>
-								<StepLabel sx={{ fontSize: "90px" }} {...labelProps}>
-									{label}
-								</StepLabel>
+								<StepLabel {...labelProps}>{label}</StepLabel>
 							</Step>
 						);
 					})}
 				</Stepper>
 				{activeStep === steps.length ? (
 					<>
-						<Typography sx={{ mt: 2, mb: 1 }}>All steps completed - you&apos;re finished</Typography>
+						<h1 className="text-3xl m-5">All steps completed!</h1>
 
 						<Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
 							<Box sx={{ flex: "1 1 auto" }} />
-							<Button onClick={handleReset}>Reset</Button>
+							<Button style={{ fontSize: "20px" }} onClick={handleReset}>
+								Reset
+							</Button>
 						</Box>
 					</>
 				) : (
 					<>
 						{activeStep === 0 && (
 							<>
-								<Typography sx={{ mt: 2, mb: 1, mx: 4 }}>Step {activeStep + 1}</Typography>
 								<Dogs addDog={addDog} removeDog={removeDog} selectedDogs={selectedDogIds} />
 							</>
 						)}
 
 						{activeStep === 1 && (
 							<>
-								<Typography sx={{ mt: 2, mb: 1, mx: 4 }}>Step {activeStep + 1}</Typography>
 								<SelectedDogs
 									addDog={addDog}
 									removeDog={removeDog}
@@ -90,7 +87,11 @@ function Adoption() {
 							</>
 						)}
 
-						{activeStep === 2 && <Match selectedDogIds={selectedDogIds} />}
+						{activeStep === 2 && (
+							<>
+								<Match selectedDogIds={selectedDogIds} />
+							</>
+						)}
 
 						<Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
 							<Button
@@ -103,9 +104,21 @@ function Adoption() {
 								Back
 							</Button>
 							<Box sx={{ flex: "1 1 auto" }} />
-							<Button style={{ fontSize: "20px" }} onClick={handleNext}>
-								{activeStep === steps.length - 1 ? "Finish" : "Next"}
-							</Button>
+							{activeStep === 0 && (
+								<Button style={{ fontSize: "20px" }} onClick={handleNext}>
+									Next
+								</Button>
+							)}
+							{activeStep === 1 && (
+								<Button disabled={selectedDogIds.length === 0} style={{ fontSize: "20px" }} onClick={handleNext}>
+									Match
+								</Button>
+							)}
+							{activeStep === 2 && (
+								<Button style={{ fontSize: "20px" }} onClick={handleNext}>
+									Finish
+								</Button>
+							)}
 						</Box>
 					</>
 				)}

@@ -4,7 +4,6 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import MenuItem from "@mui/material/MenuItem";
@@ -15,14 +14,14 @@ import { FormControl, InputLabel, Select, SelectChangeEvent, TextField } from "@
 export default function DialogSelect({
 	filterChange,
 }: {
-	filterChange: (minAge: number | string, maxAge: number | string, breeds: string[], zipCodes: string) => void;
+	filterChange: (minAge: number | string, maxAge: number | string, breeds: string[], sortBy: string) => void;
 }) {
 	const [open, setOpen] = useState(false);
 	const [breeds, setBreeds] = useState<string[]>([]);
 	const [breedsFilter, setBreedsFilter] = useState<string[]>([]);
 	const [ageMinFilter, setAgeMinFilter] = useState<number | string>("");
 	const [ageMaxFilter, setAgeMaxFilter] = useState<number | string>("");
-	const [zipCode, setZipCode] = useState<string>("");
+	const [sortBy, setSortBy] = useState<string>("");
 	const [error, setError] = useState<boolean>(false);
 
 	const handleClickOpen = () => {
@@ -30,16 +29,19 @@ export default function DialogSelect({
 	};
 
 	const handleClose = () => {
+		setOpen(false);
+	};
+
+	const clearFilter = () => {
 		setBreedsFilter([]);
 		setAgeMinFilter("");
 		setAgeMaxFilter("");
-		setZipCode("");
-		setOpen(false);
+		setSortBy("");
 	};
 
 	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		filterChange(ageMinFilter, ageMaxFilter, breedsFilter, zipCode);
+		filterChange(ageMinFilter, ageMaxFilter, breedsFilter, sortBy);
 		setOpen(false);
 	};
 
@@ -115,13 +117,8 @@ export default function DialogSelect({
 										target: { value },
 									} = event;
 
-									setBreedsFilter(
-										// On autofill we get a stringified value.
-										typeof value === "string" ? value.split(",") : value
-									);
+									setBreedsFilter(typeof value === "string" ? value.split(",") : value);
 								}}
-								// input={<OutlinedInput label="Name" />}
-								// MenuProps={MenuProps}
 							>
 								{breeds.map((breed) => (
 									<MenuItem key={breed} value={breed}>
@@ -132,17 +129,30 @@ export default function DialogSelect({
 						</FormControl>
 
 						<TextField
-							sx={{ m: 1, minWidth: 300 }}
-							label="Zip Code"
-							value={zipCode}
-							onChange={(event) => setZipCode(event.target.value)}
-						/>
-						<DialogActions>
+							sx={{ m: 1, minWidth: 180 }}
+							select
+							label="Sort By"
+							value={sortBy}
+							onChange={(event) => setSortBy(event.target.value)}
+						>
+							<MenuItem value="">-</MenuItem>
+							<MenuItem value="breed:asc">Breed ⬆︎</MenuItem>
+							<MenuItem value="breed:desc">Breed ⬇︎</MenuItem>
+							<MenuItem value="name:asc">Name ⬆︎</MenuItem>
+							<MenuItem value="name:desc">Name ⬇︎</MenuItem>
+							<MenuItem value="age:asc">Age ⬆︎</MenuItem>
+							<MenuItem value="age:desc">Age ⬇︎</MenuItem>
+						</TextField>
+
+						<div className="flex justify-between">
 							<Button onClick={handleClose}>Cancel</Button>
-							<Button disabled={error} type="submit">
-								Apply
-							</Button>
-						</DialogActions>
+							<div>
+								<Button onClick={clearFilter}>Clear</Button>
+								<Button disabled={error} type="submit">
+									Apply
+								</Button>
+							</div>
+						</div>
 					</DialogContent>
 				</Box>
 			</Dialog>

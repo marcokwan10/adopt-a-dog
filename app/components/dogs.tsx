@@ -47,7 +47,7 @@ function Dogs({
 	const [ageMinFilter, setAgeMinFilter] = useState<number | string>("");
 	const [ageMaxFilter, setAgeMaxFilter] = useState<number | string>("");
 	const [breedsFilter, setBreedsFilter] = useState<string[]>([]);
-	const [zipCodeFilter, setZipCodeFilter] = useState<string>("");
+	const [sortBy, setSortBy] = useState<string>("");
 	const [loading, setLoading] = useState(true);
 
 	const handleChangePage = (event: MouseEvent<HTMLButtonElement> | null, newPage: number) => {
@@ -59,68 +59,76 @@ function Dogs({
 		setPage(0);
 	};
 
-	const filterChange = (minAge: number | string, maxAge: number | string, breeds: string[], zipCode: string) => {
+	const filterChange = (minAge: number | string, maxAge: number | string, breeds: string[], sortBy: string) => {
 		setAgeMinFilter(minAge);
 		setAgeMaxFilter(maxAge);
 		setBreedsFilter(breeds);
-		setZipCodeFilter(zipCode);
+		setSortBy(sortBy);
 	};
 
 	useEffect(() => {
 		async function fetchDogs() {
-			const url = new URL("https://frontend-take-home-service.fetch.com/dogs/search");
-			url.searchParams.append("size", itemsPerPage.toString());
-			url.searchParams.append("from", (itemsPerPage * page).toString());
+			try {
+				const url = new URL("https://frontend-take-home-service.fetch.com/dogs/search");
+				url.searchParams.append("size", itemsPerPage.toString());
+				url.searchParams.append("from", (itemsPerPage * page).toString());
 
-			if (ageMinFilter) {
-				url.searchParams.append("ageMin", ageMinFilter.toString());
-			}
+				if (ageMinFilter) {
+					url.searchParams.append("ageMin", ageMinFilter.toString());
+				}
 
-			if (ageMaxFilter) {
-				url.searchParams.append("ageMax", ageMaxFilter.toString());
-			}
+				if (ageMaxFilter) {
+					url.searchParams.append("ageMax", ageMaxFilter.toString());
+				}
 
-			if (breedsFilter.length) {
-				breedsFilter.forEach((breed) => {
-					url.searchParams.append("breeds", breed);
+				if (breedsFilter.length) {
+					breedsFilter.forEach((breed) => {
+						url.searchParams.append("breeds", breed);
+					});
+				}
+
+				if (sortBy) {
+					url.searchParams.append("sort", sortBy);
+				} else {
+					url.searchParams.append("sort", "breed:asc");
+				}
+
+				const dogPagedRes = await fetch(url, {
+					method: "GET",
+					credentials: "include",
 				});
+				if (dogPagedRes.status === 401) {
+					alert("You session has timed out. Please log in again.");
+					redirect("/");
+				}
+
+				const pagedData: PagedData = await dogPagedRes.json();
+
+				const dogsRes = await fetch("https://frontend-take-home-service.fetch.com/dogs", {
+					method: "POST",
+					credentials: "include",
+					headers: {
+						"content-type": "application/json",
+					},
+					body: JSON.stringify(pagedData.resultIds),
+				});
+
+				const dogs: Dog[] = await dogsRes.json();
+
+				const result: DogPaged = {
+					next: pagedData.next,
+					dogs: dogs,
+					total: pagedData.total,
+				};
+
+				setDogPaged(result);
+				setLoading(false);
+			} catch (error) {
+				console.error(error);
 			}
-
-			if (zipCodeFilter) {
-				url.searchParams.append("zipCodes", zipCodeFilter);
-			}
-
-			const dogPagedRes = await fetch(url, {
-				method: "GET",
-				credentials: "include",
-			});
-			if (dogPagedRes.status === 401) {
-				redirect("/");
-			}
-			const pagedData: PagedData = await dogPagedRes.json();
-
-			const dogsRes = await fetch("https://frontend-take-home-service.fetch.com/dogs", {
-				method: "POST",
-				credentials: "include",
-				headers: {
-					"content-type": "application/json",
-				},
-				body: JSON.stringify(pagedData.resultIds),
-			});
-
-			const dogs: Dog[] = await dogsRes.json();
-
-			const result: DogPaged = {
-				next: pagedData.next,
-				dogs: dogs,
-				total: pagedData.total,
-			};
-
-			setDogPaged(result);
-			setLoading(false);
 		}
 		fetchDogs();
-	}, [page, itemsPerPage, ageMinFilter, ageMaxFilter, breedsFilter, zipCodeFilter]);
+	}, [page, itemsPerPage, ageMinFilter, ageMaxFilter, breedsFilter, sortBy]);
 
 	return (
 		<>
@@ -197,7 +205,6 @@ function Dogs({
 						onRowsPerPageChange={handleChangeItemsPerPage}
 						labelRowsPerPage="Dogs per page"
 						showFirstButton={true}
-						showLastButton={true}
 						rowsPerPageOptions={[12, 24, 48]}
 					/>
 				</div>

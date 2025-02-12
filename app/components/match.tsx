@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Dog } from "./dogs";
-import { Box, Grid2 } from "@mui/material";
 import Image from "next/image";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PetsIcon from "@mui/icons-material/Pets";
@@ -51,20 +50,16 @@ function Match({ selectedDogIds }: { selectedDogIds: string[] }) {
 					<h1 className="text-3xl">Loading...</h1>
 				</div>
 			) : (
-				<div className="w-full">
-					<div className="flex justify-center  md:h-[600px]">
-						<Image
-							className="self-center h-auto w-auto max-h-[600px]"
-							src={matchedDog?.img || "/dog.svg"}
-							alt={matchedDog?.name || "dog"}
-							width="450"
-							height="400"
-						/>
-					</div>
-					<div className="flex justify-between mx-16 mt-3">
-						<h1 className="text-3xl mt-3">{matchedDog?.name}</h1>
-					</div>
-					<div className="flex-col xl:flex xl:flex-row xl:justify-between mx-16">
+				<div className="w-full flex flex-col items-center m-7">
+					<Image
+						className="self-center  "
+						src={matchedDog?.img || "/paw.svg"}
+						alt={matchedDog?.name || "dog"}
+						width="650"
+						height="800"
+					/>
+					<h1 className="text-5xl mt-4">{matchedDog?.name}</h1>
+					<div className="mt-4 w-[40%] flex justify-between ">
 						<p className="text-2xl">
 							<CalendarMonthIcon className="mb-1 me-1" />
 							{matchedDog?.age} {matchedDog!.age > 1 ? "years" : "year"}
