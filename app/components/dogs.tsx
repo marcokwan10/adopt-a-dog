@@ -159,7 +159,7 @@ function Dogs({
 								<Grid2 key={dog.id} size={{ xs: 4, sm: 4, md: 4, lg: 4 }} className="">
 									<div className="flex justify-center  md:h-[600px]">
 										<Image
-											className="self-center h-auto w-auto max-h-[600px]"
+											className="self-center h-fit  max-h-[600px]"
 											src={dog.img}
 											alt={dog.name}
 											width="450"
