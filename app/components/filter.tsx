@@ -57,7 +57,7 @@ export default function DialogSelect({
 
 	return (
 		<>
-			<Button style={{ fontSize: "24px" }} startIcon={<FilterListIcon />} onClick={handleClickOpen}>
+			<Button style={{ fontSize: "20px" }} startIcon={<FilterListIcon />} onClick={handleClickOpen}>
 				Filter
 			</Button>
 			<Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
