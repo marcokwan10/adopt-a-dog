@@ -94,16 +94,19 @@ function Adoption() {
 						)}
 
 						<Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-							<Button
-								style={{ fontSize: "20px" }}
-								color="inherit"
-								disabled={activeStep === 0}
-								onClick={handleBack}
-								sx={{ mr: 1 }}
-							>
-								Back
-							</Button>
+							{activeStep > 0 && (
+								<Button
+									style={{ fontSize: "20px" }}
+									color="inherit"
+									disabled={activeStep === 0}
+									onClick={handleBack}
+									sx={{ mr: 1 }}
+								>
+									Back
+								</Button>
+							)}
 							<Box sx={{ flex: "1 1 auto" }} />
+
 							{activeStep === 0 && (
 								<Button style={{ fontSize: "20px" }} onClick={handleNext}>
 									Next
