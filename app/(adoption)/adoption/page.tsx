@@ -26,6 +26,7 @@ function Adoption() {
 	};
 
 	const handleReset = () => {
+		setSelectedDogIds([]);
 		setActiveStep(0);
 	};
 
