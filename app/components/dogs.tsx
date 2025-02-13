@@ -98,8 +98,8 @@ function Dogs({
 					credentials: "include",
 				});
 				if (dogPagedRes.status === 401) {
-					alert("You session has timed out. Please log in again.");
 					redirect("/");
+					// alert("You session has timed out. Please log in again.");
 				}
 
 				const pagedData: PagedData = await dogPagedRes.json();
