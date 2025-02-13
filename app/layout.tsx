@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+import { Analytics } from "@mui/icons-material";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // const geistSans = Geist({
 // 	variable: "--font-geist-sans",
@@ -27,6 +29,8 @@ export default function RootLayout({
 		<html lang="en" className="h-full bg-white" suppressHydrationWarning>
 			<body className="h-full">
 				<AppRouterCacheProvider>{children}</AppRouterCacheProvider>
+				<SpeedInsights />
+				<Analytics />
 			</body>
 		</html>
 	);
