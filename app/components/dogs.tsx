@@ -68,64 +68,61 @@ function Dogs({
 
 	useEffect(() => {
 		async function fetchDogs() {
-			try {
-				const url = new URL("https://frontend-take-home-service.fetch.com/dogs/search");
-				url.searchParams.append("size", itemsPerPage.toString());
-				url.searchParams.append("from", (itemsPerPage * page).toString());
+			const url = new URL("https://frontend-take-home-service.fetch.com/dogs/search");
+			url.searchParams.append("size", itemsPerPage.toString());
+			url.searchParams.append("from", (itemsPerPage * page).toString());
 
-				if (ageMinFilter) {
-					url.searchParams.append("ageMin", ageMinFilter.toString());
-				}
-
-				if (ageMaxFilter) {
-					url.searchParams.append("ageMax", ageMaxFilter.toString());
-				}
-
-				if (breedsFilter.length) {
-					breedsFilter.forEach((breed) => {
-						url.searchParams.append("breeds", breed);
-					});
-				}
-
-				if (sortBy) {
-					url.searchParams.append("sort", sortBy);
-				} else {
-					url.searchParams.append("sort", "breed:asc");
-				}
-
-				const dogPagedRes = await fetch(url, {
-					method: "GET",
-					credentials: "include",
-				});
-				if (dogPagedRes.status === 401) {
-					redirect("/");
-					// alert("You session has timed out. Please log in again.");
-				}
-
-				const pagedData: PagedData = await dogPagedRes.json();
-
-				const dogsRes = await fetch("https://frontend-take-home-service.fetch.com/dogs", {
-					method: "POST",
-					credentials: "include",
-					headers: {
-						"content-type": "application/json",
-					},
-					body: JSON.stringify(pagedData.resultIds),
-				});
-
-				const dogs: Dog[] = await dogsRes.json();
-
-				const result: DogPaged = {
-					next: pagedData.next,
-					dogs: dogs,
-					total: pagedData.total,
-				};
-
-				setDogPaged(result);
-				setLoading(false);
-			} catch (error) {
-				console.error(error);
+			if (ageMinFilter) {
+				url.searchParams.append("ageMin", ageMinFilter.toString());
 			}
+
+			if (ageMaxFilter) {
+				url.searchParams.append("ageMax", ageMaxFilter.toString());
+			}
+
+			if (breedsFilter.length) {
+				breedsFilter.forEach((breed) => {
+					url.searchParams.append("breeds", breed);
+				});
+			}
+
+			if (sortBy) {
+				url.searchParams.append("sort", sortBy);
+			} else {
+				url.searchParams.append("sort", "breed:asc");
+			}
+
+			const dogPagedRes = await fetch(url, {
+				method: "GET",
+				credentials: "include",
+			});
+
+			if (dogPagedRes.status === 401) {
+				alert("You session has timed out. Please log in again.");
+				redirect("/");
+			}
+
+			const pagedData: PagedData = await dogPagedRes.json();
+
+			const dogsRes = await fetch("https://frontend-take-home-service.fetch.com/dogs", {
+				method: "POST",
+				credentials: "include",
+				headers: {
+					"content-type": "application/json",
+				},
+				body: JSON.stringify(pagedData.resultIds),
+			});
+
+			const dogs: Dog[] = await dogsRes.json();
+
+			const result: DogPaged = {
+				next: pagedData.next,
+				dogs: dogs,
+				total: pagedData.total,
+			};
+
+			setDogPaged(result);
+			setLoading(false);
 		}
 		fetchDogs();
 	}, [page, itemsPerPage, ageMinFilter, ageMaxFilter, breedsFilter, sortBy]);
