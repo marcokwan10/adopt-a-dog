@@ -17,10 +17,8 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="h-full bg-white" suppressHydrationWarning>
 			<body className="h-full">
-				<AppRouterCacheProvider>
-					{children}
-					<Analytics />
-				</AppRouterCacheProvider>
+				<AppRouterCacheProvider>{children}</AppRouterCacheProvider>
+				<Analytics />
 			</body>
 		</html>
 	);
